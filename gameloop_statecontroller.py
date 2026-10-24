@@ -4,10 +4,11 @@ import sys
 '''
 THÔNG SỐ CHUNG
 '''
+pygame.init()
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-screen = pygame.display.set_mode(SCREEN_WIDTH, SCREEN_HEIGHT)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("FLASHCARDS GAME!!!")
 clock = pygame.time.Clock()
 
@@ -26,9 +27,9 @@ RED = (220, 20, 60)
 FONT CHỮ
 '''
 
-FONT_TITLE = pygame.font.SysFont("Times New Roman", 36, bold = True)
-FONT_TEXT = pygame.font.SysFont("Times New Roman", 20)
-FONT_CARD = pygame.font.SysFont("Comfortaa", 28, bold = True)
+FONT_TITLE = pygame.font.SysFont("Arial", 36, bold = True)
+FONT_TEXT = pygame.font.SysFont("Arial", 20)
+FONT_CARD = pygame.font.SysFont("Arial", 28, bold = True)
 
 '''
 QUẢN LÝ TRẠNG THÁI GAME
@@ -53,6 +54,20 @@ status_message = "" #Lưu văn bản thông báo sẽ được hiển thị
 TRẠNG THÁI GAME 
 '''
 game_state = "MENU" #MENU --> "ADD" --> "STUDY" --> "RESULT"
+
+
+'''
+MÀN HÌNH (HÀM GIẢ ĐỂ CHẠY THỬ PHẦN CỦA QANH)
+Xóa phần này khi code phần của mình
+'''
+def draw_menu(screen):
+    pass
+def draw_add_screen(screen):
+    pass
+def draw_study(screen):
+    pass
+def draw_result(screen):
+    pass
 
 '''
 MAIN GAME LOOP
