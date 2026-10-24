@@ -1,0 +1,122 @@
+'''
+HÀM PHỤ: VẼ NÚT
+'''
+def draw_button(screen, rect, color, text):
+    pygame.draw.rect(screen, color, rect, border_radius = 12)
+    label = FONT_TEXT.render(text, True, WHITE)
+    screen.blit(label, label.get_rect(center = rect.center))
+
+
+'''
+MÀN HÌNH HỌC
+'''
+def draw_study(screen):
+    screen.fill(LIGHT_GRAY)
+
+    total = len(vocab_list)
+    # Tránh lỗi nếu current_index vượt quá số từ
+    index = min(current_index, total - 1)
+
+    # 1. Số thứ tự từ: "Từ 3 / 10"
+    counter = FONT_TEXT.render(f"Từ {index + 1} / {total}", True, BLACK)
+    screen.blit(counter, (50, 30))
+
+    # Nút thoát về menu (góc phải trên)
+    btn_exit = pygame.Rect(650, 20, 100, 40)
+    draw_button(screen, btn_exit, GRAY, "Thoát")
+
+    # 2. Thanh tiến độ (tính theo số từ đã học xong)
+    bar_bg = pygame.Rect(50, 75, 700, 20)
+    progress = current_index / total
+    bar_fill = pygame.Rect(50, 75, int(700 * progress), 20)
+    pygame.draw.rect(screen, GRAY, bar_bg, border_radius = 10)
+    if bar_fill.width > 0:
+        pygame.draw.rect(screen, BLUE, bar_fill, border_radius = 10)
+    percent = FONT_TEXT.render(f"{int(progress * 100)}%", True, BLACK)
+    screen.blit(percent, (760 - percent.get_width() // 2 - 10, 100))
+
+    # 3. Thẻ từ vựng (mặt trước / mặt sau)
+    card_rect = pygame.Rect(150, 140, 500, 250)
+    pygame.draw.rect(screen, WHITE, card_rect, border_radius = 20)
+    pygame.draw.rect(screen, BLUE, card_rect, width = 3, border_radius = 20)
+
+    if is_flipped:
+        card_text = vocab_list[index]["back"]
+    else:
+        card_text = vocab_list[index]["front"]
+    text_surface = FONT_CARD.render(card_text, True, BLACK)
+    screen.blit(text_surface, text_surface.get_rect(center = card_rect.center))
+
+    hint = FONT_TEXT.render("Nhấn SPACE hoặc click vào thẻ để lật", True, BLACK)
+    screen.blit(hint, hint.get_rect(center = (400, 415)))
+
+    # 4. Hai nút Chưa thuộc / Đã thuộc
+    btn_unknow = pygame.Rect(150, 450, 220, 60)
+    btn_know = pygame.Rect(430, 450, 220, 60)
+    draw_button(screen, btn_unknow, RED, "Chưa thuộc")
+    draw_button(screen, btn_know, GREEN, "Đã thuộc")
+
+    # 5. Điểm hiện tại
+    score_text = FONT_TEXT.render(
+        f"Đã thuộc: {score_know}   |   Chưa thuộc: {score_unknow}", True, BLACK)
+    screen.blit(score_text, score_text.get_rect(center = (400, 550)))
+
+    return btn_unknow, btn_know, card_rect, btn_exit
+
+
+'''
+MÀN HÌNH TỔNG KẾT
+'''
+def draw_result(screen):
+    screen.fill(LIGHT_GRAY)
+
+    total = score_know + score_unknow
+    if total > 0:
+        percent = int(score_know / total * 100)
+    else:
+        percent = 0
+
+    # Tiêu đề
+    title = FONT_TITLE.render("KẾT QUẢ HỌC TẬP", True, BLUE)
+    screen.blit(title, title.get_rect(center = (400, 70)))
+
+    # Lời nhận xét + số sao theo phần trăm
+    if percent == 100:
+        comment, stars = "Tuyệt vời! Bạn thuộc hết rồi!", 3
+    elif percent >= 70:
+        comment, stars = "Giỏi lắm! Sắp thuộc hết rồi!", 2
+    elif percent >= 40:
+        comment, stars = "Khá ổn, ôn thêm chút nữa nhé!", 1
+    else:
+        comment, stars = "Đừng nản, học lại để nhớ hơn nào!", 0
+
+    # Vẽ 3 ngôi sao (sao sáng màu vàng, sao tối màu xám)
+    for i in range(3):
+        color = (255, 200, 0) if i < stars else GRAY
+        pygame.draw.circle(screen, color, (320 + i * 80, 150), 30)
+
+    comment_surface = FONT_CARD.render(comment, True, BLACK)
+    screen.blit(comment_surface, comment_surface.get_rect(center = (400, 225)))
+
+    # Bảng điểm
+    pygame.draw.rect(screen, WHITE, (200, 270, 400, 150), border_radius = 15)
+    lines = [
+        (f"Tổng số từ: {total}", BLACK),
+        (f"Đã thuộc: {score_know}", GREEN),
+        (f"Chưa thuộc: {score_unknow}", RED),
+        (f"Tỉ lệ thuộc: {percent}%", BLUE),
+    ]
+    for i, (line, color) in enumerate(lines):
+        surface = FONT_TEXT.render(line, True, color)
+        screen.blit(surface, (230, 285 + i * 32))
+
+    # Thanh xanh/đỏ thể hiện tỉ lệ thuộc
+    pygame.draw.rect(screen, RED, (200, 440, 400, 20), border_radius = 10)
+    if total > 0:
+        pygame.draw.rect(screen, GREEN, (200, 440, int(400 * score_know / total), 20), border_radius = 10)
+
+    # Nút về menu
+    btn_restart = pygame.Rect(300, 500, 200, 55)
+    draw_button(screen, btn_restart, BLUE, "Về Menu")
+
+    return btn_restart
