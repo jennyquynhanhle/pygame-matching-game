@@ -1,2 +1,2 @@
-# pygame-matching-game
-making matching game for mid-term project
+# pygame-flashcards
+making flashcards game for mid-term project
